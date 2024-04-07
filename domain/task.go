@@ -2,7 +2,14 @@
 
 package domain
 
-import "context"
+import (
+	"context"
+	"errors"
+)
+
+var (
+	ErrTaskNotFound = errors.New("task not found")
+)
 
 // Task represents a task.
 type Task struct {

@@ -2,7 +2,6 @@ package stub
 
 import (
 	"context"
-	"errors"
 	"slices"
 	"sync"
 	"time"
@@ -91,7 +90,7 @@ func (repo *InMemoryTaskRepository) UpdateTask(ctx context.Context, id uint, req
 	}
 
 	if indexOf == nil {
-		return errors.New("task not found")
+		return domain.ErrTaskNotFound
 	}
 
 	if req.Name != nil {
@@ -118,7 +117,7 @@ func (r *InMemoryTaskRepository) DeleteTask(ctx context.Context, id uint) error 
 	}
 
 	if indexOf == nil {
-		return errors.New("task not found")
+		return domain.ErrTaskNotFound
 	}
 
 	r.tasks = append(r.tasks[:*indexOf], r.tasks[*indexOf+1:]...)
