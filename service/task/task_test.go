@@ -85,9 +85,9 @@ func (s *TaskServiceTaskSuite) TestListTasks() {
 
 	// 1.22 new feature: range a number like other language :D
 	for index := range 10 {
-		repo.CreateTask(context.Background(), domain.CreateTaskRequest{
+		s.NoError(repo.CreateTask(context.Background(), domain.CreateTaskRequest{
 			Name: fmt.Sprintf("task %d", index+1),
-		})
+		}))
 	}
 
 	tasksInRepo, err := service.ListTasks(context.Background())
@@ -174,9 +174,9 @@ func (s *TaskServiceTaskSuite) TestDeleteTask() {
 	service := task.NewService(repo)
 
 	for index := range 10 {
-		repo.CreateTask(context.Background(), domain.CreateTaskRequest{
+		s.NoError(repo.CreateTask(context.Background(), domain.CreateTaskRequest{
 			Name: fmt.Sprintf("task %d", index+1),
-		})
+		}))
 	}
 
 	tasksInRepo, err := repo.ListTasks(context.Background())
