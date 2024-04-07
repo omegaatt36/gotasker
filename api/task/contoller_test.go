@@ -10,7 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/omegaatt36/gotasker/api/task"
 	"github.com/omegaatt36/gotasker/domain"
-	"github.com/omegaatt36/gotasker/domain/stub"
+	"github.com/omegaatt36/gotasker/persistance"
+	"github.com/omegaatt36/gotasker/persistance/database"
 	taskService "github.com/omegaatt36/gotasker/service/task"
 	"github.com/omegaatt36/gotasker/util"
 	"github.com/stretchr/testify/suite"
@@ -24,15 +25,20 @@ func (s *TaskControllerSuite) SetupSuite() {
 }
 
 func (s *TaskControllerSuite) TestListTasks() {
+	miniredis := database.InitializeTestingRedis()
+	defer miniredis.Close()
+
+	database.Initialize(context.Background(), miniredis.Addr(), "")
+
+	repo := persistance.NewRedisRepo(database.Redis())
+	service := taskService.NewService(repo)
+	controller := task.NewController(service)
+
 	type taskDetail struct {
 		ID     uint   `json:"id"`
 		Name   string `json:"name"`
 		Status int    `json:"status"`
 	}
-
-	repo := stub.NewInMemoryTaskRepository()
-	service := taskService.NewService(repo)
-	controller := task.NewController(service)
 
 	req := util.HTTPTestRequest{
 		ServedURL:            "/tasks",
@@ -80,7 +86,12 @@ func (s *TaskControllerSuite) TestListTasks() {
 }
 
 func (s *TaskControllerSuite) TestCreateTask() {
-	repo := stub.NewInMemoryTaskRepository()
+	miniredis := database.InitializeTestingRedis()
+	defer miniredis.Close()
+
+	database.Initialize(context.Background(), miniredis.Addr(), "")
+
+	repo := persistance.NewRedisRepo(database.Redis())
 	service := taskService.NewService(repo)
 	controller := task.NewController(service)
 
@@ -146,7 +157,12 @@ func (s *TaskControllerSuite) TestCreateTask() {
 }
 
 func (s *TaskControllerSuite) TestUpdateTask() {
-	repo := stub.NewInMemoryTaskRepository()
+	miniredis := database.InitializeTestingRedis()
+	defer miniredis.Close()
+
+	database.Initialize(context.Background(), miniredis.Addr(), "")
+
+	repo := persistance.NewRedisRepo(database.Redis())
 	service := taskService.NewService(repo)
 	controller := task.NewController(service)
 
@@ -236,7 +252,12 @@ func (s *TaskControllerSuite) TestUpdateTask() {
 }
 
 func (s *TaskControllerSuite) TestDeleteTask() {
-	repo := stub.NewInMemoryTaskRepository()
+	miniredis := database.InitializeTestingRedis()
+	defer miniredis.Close()
+
+	database.Initialize(context.Background(), miniredis.Addr(), "")
+
+	repo := persistance.NewRedisRepo(database.Redis())
 	service := taskService.NewService(repo)
 	controller := task.NewController(service)
 

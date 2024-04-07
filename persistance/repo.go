@@ -140,8 +140,7 @@ func (r *RedisRepo) DeleteTask(ctx context.Context, id uint) error {
 		return fmt.Errorf("failed to get task: %w", err)
 	}
 
-	if err := r.client.Del(ctx, modelTask.Key()).Err(); err != nil {
-		// TODO: check if task not found
+	if err := r.client.HDel(ctx, models.KeyTaskHMap, modelTask.Key()).Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
 			return domain.ErrTaskNotFound
 		}
