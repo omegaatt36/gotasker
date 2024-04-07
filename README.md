@@ -36,6 +36,8 @@ GoTasker 是一個使用 Go 語言開發 RESTful API，提供簡單而高效的�
 gotasker-api      | INFO        api/server.go:64        starts serving...
 ```
 
+打開瀏覽器，進到 <http://localhost:9527/>，透過 swagger-ui 來進行 API 的呼叫。
+
 若是更改了程式碼，需要重新編譯，請使用 `docker compose up --build` 而非 `docker compose up`，如此一來 docker 才會重新拿 Dockerfile 來再次打包。
 
 ### 方法二
@@ -55,6 +57,8 @@ gotasker-api      | INFO        api/server.go:64        starts serving...
 
 ## Troubleshooting
 
+### Redis connection refused
+
 特別需要注意的是，無論使用何種方法，看到以下 log 才是成功啟動。
 
 ```go
@@ -68,3 +72,13 @@ INFO    api/server.go:64        starts serving...
 PANIC   database/database.go:29 connect to redis(localhost:6379) failed: dial tcp [::1]:6379: connect: connection refused
 panic: connect to redis(localhost:6379) failed: dial tcp [::1]:6379: connect: connection refused
 ```
+
+### MacOS docker-credential-desktop not installed or not available
+
+若是在 MacOS 上使用舊版的 Docker，在執行 `docker compose up` 時可能會遇到
+
+```shell
+docker-credential-desktop not installed or not available
+```
+
+可能是遇到[這個問題](https://stackoverflow.com/questions/67642620/docker-credential-desktop-not-installed-or-not-available-in-path)，解決的方法可以參考[評論](https://stackoverflow.com/a/72888813) 中的方法。
