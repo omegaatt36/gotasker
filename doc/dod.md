@@ -20,7 +20,8 @@ Definition of Done
 
 假設：
 
-1. 需求中沒有提到 name 不可重複，則假設可以重複。
+1. 需求中沒有提到 name 不可重複，則假設可以重複，且必填。
+1. 需求中沒有提到創建任務時是否可以直接指定 status 為 completed，假設只能指定 name。
 1. 需求中沒有提到 name 與 status 可以是 nullable，則假設只會是 enum 0,1。
 1. 需求中沒有提到獲取任務清單的排序，假設使用創建時間升冪作為排序。
 1. 需求中沒有提到 tasks id 的型別是 string 或是 numeric，假設使用 unit 作為非負整數 identification。
