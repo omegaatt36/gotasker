@@ -38,7 +38,7 @@ func (task *taskDetail) fromDomain(domainTask *domain.Task) {
 func (x *Controller) ListTasks(c *gin.Context) {
 	tasks, err := x.service.ListTasks(c.Request.Context())
 	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -60,14 +60,14 @@ type createTaskRequest struct {
 func (x *Controller) CreateTask(c *gin.Context) {
 	var req createTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := x.service.CreateTask(c.Request.Context(), task.CreateTaskRequest{
 		Name: req.Name,
 	}); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -84,18 +84,18 @@ type updateTaskRequest struct {
 func (x *Controller) UpdateTask(c *gin.Context) {
 	taskID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if taskID < 1 {
-		c.AbortWithError(http.StatusBadRequest, errors.New("invalid task id"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("invalid task id"))
 		return
 	}
 
 	var req updateTaskRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -103,7 +103,7 @@ func (x *Controller) UpdateTask(c *gin.Context) {
 	if req.Status != nil {
 		domainTaskStatus := domain.TaskStatus(*req.Status)
 		if !domainTaskStatus.IsValid() {
-			c.AbortWithError(http.StatusBadRequest, domain.ErrInvalidTaskStatus)
+			c.AbortWithStatusJSON(http.StatusBadRequest, domain.ErrInvalidTaskStatus.Error())
 			return
 		}
 
@@ -115,11 +115,11 @@ func (x *Controller) UpdateTask(c *gin.Context) {
 		Status: status,
 	}); err != nil {
 		if errors.Is(err, domain.ErrTaskNotFound) {
-			c.AbortWithError(http.StatusNotFound, err)
+			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
 
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -130,22 +130,22 @@ func (x *Controller) UpdateTask(c *gin.Context) {
 func (x *Controller) DeleteTask(c *gin.Context) {
 	taskID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if taskID < 1 {
-		c.AbortWithError(http.StatusBadRequest, errors.New("invalid task id"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("invalid task id").Error())
 		return
 	}
 
 	if err := x.service.DeleteTask(c.Request.Context(), uint(taskID)); err != nil {
 		if errors.Is(err, domain.ErrTaskNotFound) {
-			c.AbortWithError(http.StatusNotFound, err)
+			c.AbortWithStatusJSON(http.StatusNotFound, err.Error())
 			return
 		}
 
-		c.AbortWithError(http.StatusInternalServerError, err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
