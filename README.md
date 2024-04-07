@@ -7,32 +7,51 @@ GoTasker 是一個使用 Go 語言開發 RESTful API，提供簡單而高效的�
 - Golang 1.22+
 - Docker or Podman
 
+## Dependencies
+
+- Redis，可以透過 `make setup-redis` 來執行
+
 ## Configuration
+
+| 環境變數/flag                 | 預設值       | 描述                                                                                                   |
+| ------------------------------ | ------------ | ------------------------------------------------------------------------------------------------------ |
+| APP_PORT/--app-port            | 8070         | 伺服器端口。預設為 8070 或者 APP_PORT 環境變數，如果有設定的話                                    |
+| APP_ENV/--app-env             | dev          | 應用程式環境。必須是 [dev, prod] 其中之一。預設為 dev 或者 APP_ENV 環境變數，如果有設定的話  |
+| LOG_LEVEL/--log-level         | debug        | 記錄層級。必須是 [debug, info, warn, error, fatal] 其中之一。預設為 debug 或者 LOG_LEVEL 環境變數，如果有設定的話 |
+| REDIS_HOST/--redis-host        | localhost    | Redis 主機。預設為 localhost 或者 REDIS_HOST 環境變數，如果有設定的話                                          |
+| REDIS_PORT/--redis-port        | 6379         | Redis 連接埠。預設為 6379 或者 REDIS_PORT 環境變數，如果有設定的話                                            |
+| REDIS_PASSWORD/--redis-password |             | Redis 密碼。預設為 REDIS_PASSWORD 環境變數，如果有設定的話                                                         |
 
 ## How To Use
 
 提供兩種方法，主要差異在 redis(in-memory data storage) 的持久與否。
 
-### 方法一
+### 方法一（推薦）
 
-使用外部 redis 作為持久資料儲存庫，所有 CRUD 過的資料會被儲存在
+使用 `docker compose up` 直接將 stack 跑起來。
 
-1. 簡單使用 `make setup-redis` 來啟動一個持久的 redis container，假裝是外部的資料層
-1. 啟動服務
-    - 選項一：直接使用 `go run main.go` 來啟動服務，參數可以參考 [#Configuration](#Configuration) 段落。
-    - 選項二：透過 `docker build -t gotasker:latest .` 來打包成 image，再執行 `docker run --net=host gotasker:latest` 來啟動 container。
-1. 透過 `make setup-swagger` 來啟動 swagger，或是直接使用 curl/httpie 等 http client 來 call endpoint。
-1. 再測試完成後可以使用 `make remove` 來刪除持久資料。
-
-### 方法二
-
-可以直接使用 `docker compose up` 來透過 `docker-compose.yaml` 與 `Dockerfile` 直接將 stack 跑起來，需要注意的是 redis 有做 health check，以及 api 會等待 redis 是健康的才啟動，請看到以下 log 再進行使用：
+需要注意的是 redis 有做 health check，以及 api 會等待 redis 是健康的才啟動，請看到以下 log 再進行使用：
 
 ```shell
 gotasker-api      | INFO        api/server.go:64        starts serving...
 ```
 
 若是更改了程式碼，需要重新編譯，請使用 `docker compose up --build` 而非 `docker compose up`，如此一來 docker 才會重新拿 Dockerfile 來再次打包。
+
+### 方法二
+
+使用外部 redis 作為持久資料儲存庫，所有 CRUD 過的資料會被儲存在
+
+1. 簡單使用 `make setup-redis` 來啟動一個持久的 redis container，假裝是外部的資料層
+1. 啟動服務
+    - 選項一：直接使用 `go run main.go` 來啟動服務，參數可以參考 [#Configuration](#Configuration) 段落。
+    - 選項二：打包成 image
+        1. `docker build -t gotasker:latest .` 來打包成 image
+        1. `docker run --net=host gotasker:latest` 來啟動 container。
+1. 呼叫 API
+    - `make setup-swagger` 來啟動 swagger，並打開瀏覽器，進到 <http://localhost:9527/>
+    - 直接使用 curl/httpie 等 http client 來 call endpoint。
+1. 測試完成後可以使用 `make remove` 來刪除持久資料。
 
 ## Troubleshooting
 
