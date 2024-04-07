@@ -7,8 +7,9 @@ import (
 	"net/http"
 
 	"github.com/omegaatt36/gotasker/api/task"
-	"github.com/omegaatt36/gotasker/domain/stub"
 	"github.com/omegaatt36/gotasker/logging"
+	"github.com/omegaatt36/gotasker/persistance"
+	"github.com/omegaatt36/gotasker/persistance/database"
 	taskService "github.com/omegaatt36/gotasker/service/task"
 
 	"github.com/gin-gonic/gin"
@@ -26,10 +27,8 @@ func NewServer() *Server {
 	apiEngine := gin.New()
 	apiEngine.RedirectTrailingSlash = true
 
-	// FIXME: use real data store
-	taskController := task.NewController(taskService.NewService(
-		stub.NewInMemoryTaskRepository(),
-	))
+	repo := persistance.NewRedisRepo(database.Redis())
+	taskController := task.NewController(taskService.NewService(repo))
 
 	return &Server{
 		router: apiEngine,

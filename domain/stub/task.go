@@ -57,8 +57,8 @@ func (repo *InMemoryTaskRepository) ListTasks(ctx context.Context) ([]domain.Tas
 	copy(tasks, repo.tasks)
 
 	slices.SortStableFunc(tasks, func(left, right task) int {
-		if left.CreatedAt > right.CreatedAt {
-			return 0
+		if left.CreatedAt < right.CreatedAt {
+			return -1
 		}
 
 		return 1
