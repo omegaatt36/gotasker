@@ -10,10 +10,9 @@ const (
 
 // Task represents a task.
 type Task struct {
-	ID        uint   `json:"id"`
-	Name      string `json:"name"`
-	Status    int    `json:"status"`
-	CreatedAt int64  `json:"created_at"`
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Status int    `json:"status"`
 }
 
 // Key returns key.

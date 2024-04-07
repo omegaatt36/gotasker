@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"time"
 
 	"github.com/omegaatt36/gotasker/domain"
 	"github.com/omegaatt36/gotasker/persistance/models"
@@ -32,10 +31,9 @@ func (r *RedisRepo) CreateTask(ctx context.Context, req domain.CreateTaskRequest
 	}
 
 	modelTask := models.Task{
-		ID:        uint(id),
-		Name:      req.Name,
-		Status:    int(domain.TaskStatusIncomplete),
-		CreatedAt: time.Now().Unix(),
+		ID:     uint(id),
+		Name:   req.Name,
+		Status: int(domain.TaskStatusIncomplete),
 	}
 
 	bs, err := json.Marshal(modelTask)
@@ -67,7 +65,7 @@ func (r *RedisRepo) ListTasks(ctx context.Context) ([]domain.Task, error) {
 	}
 
 	slices.SortStableFunc(modelTasks, func(left, right models.Task) int {
-		if left.CreatedAt < right.CreatedAt {
+		if left.ID < right.ID {
 			return -1
 		}
 
