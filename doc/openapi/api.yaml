@@ -1,0 +1,157 @@
+openapi: "3.1.0"
+info:
+  title: GoTasker API Documentation
+  description: |-
+    - The efficient communication between engineers.
+  version: 0.0.1
+  license:
+    name: Unlicense
+    url: https://github.com/omegaatt36/gotasker
+servers:
+  - url: "http://localhost:8070"
+tags:
+  - name: Role
+    description: RBAC related.
+paths:
+  /tasks:
+    get:
+      description: List all tasks.
+      summary: List all tasks.
+      operationId: listTasks
+      responses:
+        200:
+          description: The list of tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+      security: []
+    post:
+      description: Create a new task.
+      summary: Create a new task.
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        201:
+          description: The created task.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+      security: []
+  /tasks/{id}:
+    put:
+      description: Update a task.
+      summary: Update a task.
+      operationId: updateTask
+      parameters:
+        - $ref: "#/components/parameters/TaskID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskRequest"
+      responses:
+        200:
+          description: The updated task.
+          content:
+            empty: {}
+        400:
+          description: Invalid parameters.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ErrInvalidTaskID"
+                  - $ref: "#/components/schemas/ErrInvalidTaskStatus"
+        404:
+          description: Task not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrTaskNotFound"
+      security: []
+    delete:
+      description: Delete a task.
+      summary: Delete a task.
+      operationId: deleteTask
+      parameters:
+        - $ref: "#/components/parameters/TaskID"
+      responses:
+        204:
+          description: The deleted task.
+          content:
+            empty: {}
+        404:
+          description: Task not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrTaskNotFound"
+      security: []
+components:
+  parameters:
+    TaskID:
+      name: id
+      in: path
+      description: The task ID. must be a positive integer.
+      required: true
+      schema:
+        type: integer
+        format: uint
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: uint
+          description: The task ID.
+          example: 1
+        name:
+          type: string
+          description: The task name.
+          example: "Task 1"
+        status:
+          type: integer
+          enum: [0, 1]
+          description: The task status. 0 represents an incomplete task, while 1 represents a completed task.
+          example: 0
+    CreateTaskRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The task name.
+          example: "Task 1"
+      required:
+        - name
+    UpdateTaskRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The task name.
+          example: "Task 1 - updated"
+        status:
+          type: integer
+          enum: [0, 1]
+          description: The task status. 0 represents an incomplete task, while 1 represents a completed task.
+          example: 1
+    ErrInvalidTaskID:
+      type: string
+      example: "invalid task ID"
+    ErrInvalidTaskStatus:
+      type: string
+      example: "invalid task status"
+    ErrTaskNotFound:
+      type: string
+      example: "task not found"

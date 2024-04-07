@@ -7,3 +7,14 @@ services:
     restart: always
     ports:
       - 8070:8070
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: gotasker-swagger
+    volumes:
+      - ./doc/openapi:/config
+    environment:
+      - SWAGGER_JSON=/config/api.yaml
+    restart: always
+    ports:
+      - 8080:8080

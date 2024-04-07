@@ -40,6 +40,7 @@ func NewServer() *Server {
 
 // Start starts the server
 func (s *Server) Start(ctx context.Context, appPort string) <-chan struct{} {
+	s.router.Use(corsMiddleware())
 	s.registerRoutes()
 
 	srv := &http.Server{
