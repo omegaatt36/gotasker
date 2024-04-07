@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrTaskNotFound = errors.New("task not found")
+	ErrInvalidTaskID =errors.New("invalid task id")
 )
 
 // Task represents a task.

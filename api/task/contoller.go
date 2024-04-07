@@ -89,7 +89,7 @@ func (x *Controller) UpdateTask(c *gin.Context) {
 	}
 
 	if taskID < 1 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("invalid task id"))
+		c.AbortWithStatusJSON(http.StatusBadRequest, domain.ErrInvalidTaskID.Error())
 		return
 	}
 
@@ -135,7 +135,7 @@ func (x *Controller) DeleteTask(c *gin.Context) {
 	}
 
 	if taskID < 1 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, errors.New("invalid task id").Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, domain.ErrInvalidTaskID.Error())
 		return
 	}
 
