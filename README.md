@@ -28,7 +28,7 @@ GoTasker 是一個使用 Go 語言開發 RESTful API，提供簡單而高效的�
 
 ### 方法一（推薦）
 
-使用 `docker compose up` 直接將 stack 跑起來。
+使用 `docker compose up --build` 直接將 stack 跑起來。
 
 需要注意的是 redis 有做 health check，以及 api 會等待 redis 是健康的才啟動，請看到以下 log 再進行使用：
 

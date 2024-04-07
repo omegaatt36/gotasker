@@ -2,6 +2,10 @@ DOCKER=docker
 
 PROJECT_NAME=gotasker
 
+# https://golangci-lint.run/welcome/install/
+lint:
+	golangci-lint run ./...
+
 test:
 	go test ./...
 
